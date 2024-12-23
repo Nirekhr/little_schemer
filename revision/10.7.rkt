@@ -96,6 +96,23 @@
 	(set? (second f))
 	(multimember* (third f) (union '(cons lambda else car cdr null? eq? #t #f atom? zero? add1 sub1 number? quote cond) (*lambda?1 f))))))
 
+(define *cond1
+  (lambda (ce)
+    (cond
+      ((null? ce) #t)
+      ((eq? (length (car ce)) 2)
+       (cond
+	 ((eq? (car (car ce)) 'else)
+	  (cond
+	    ((null? (cdr ce)) #t)
+	    (else #f)))
+	 (else (*cond1 (cdr ce)))))
+      (else #f))))
+
+(define *cond?
+  (lambda (ce)
+    (and (eq? (car ce) 'cond) (*cond1 (cdr ce)))))
+
 (*lambda? e5)
 (*lambda? e6)
 (*lambda? e2)
